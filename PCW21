@@ -1,0 +1,74 @@
+
+
+mu = np.linspace(0, 60, 201)
+
+
+# The prior is greater than 0 in the range (0, 50) based on our guess.
+prior = np.where(
+    mu > 10,
+    np.where(
+        mu < 30, mu - 10,
+        np.where(
+            mu < 50, 50 - mu, 0)),
+    0)
+
+
+# Remember the unnormalized values
+unnormalized_prior = prior
+
+# Use the trapezoid rule to compute the integral of the unnormalized prior
+area = sp.integrate.trapz(unnormalized_prior, mu)
+print('Area under the unnormalized prior curve:', area)
+
+# Normalize the prior
+prior = unnormalized_prior / area
+
+
+
+# We measured a tree of height 20 m
+data =[20, 27, 23.5, 28.2, 21]
+
+# Parameters of the truncated normal pdf
+sigma = 4
+lower_limit = 0
+upper_limit = np.inf
+
+likelihood1 = sts.truncnorm.pdf(
+    data[1],
+    (lower_limit - mu) / sigma,  # See the SciPy documentation. The lower and upper
+    (upper_limit - mu) / sigma,  # limits are defined in terms of the standard normal.
+    loc=mu,
+    scale=sigma)
+
+likelihood2 = sts.truncnorm.pdf(
+    data[2],
+    (lower_limit - mu) / sigma,  # See the SciPy documentation. The lower and upper
+    (upper_limit - mu) / sigma,  # limits are defined in terms of the standard normal.
+    loc=mu,
+    scale=sigma)
+
+likelihood3 = sts.truncnorm.pdf(
+    data[3],
+    (lower_limit - mu) / sigma,  # See the SciPy documentation. The lower and upper
+    (upper_limit - mu) / sigma,  # limits are defined in terms of the standard normal.
+    loc=mu,
+
+likelihood4 = sts.truncnorm.pdf(
+    data[4],
+    (lower_limit - mu) / sigma,  # See the SciPy documentation. The lower and upper
+    (upper_limit - mu) / sigma,  # limits are defined in terms of the standard normal.
+    loc=mu,
+    scale=sigma)
+
+likelihood5 = sts.truncnorm.pdf(
+    data[5],
+    (lower_limit - mu) / sigma,  # See the SciPy documentation. The lower and upper
+    (upper_limit - mu) / sigma,  # limits are defined in terms of the standard normal.
+    loc=mu,
+    scale=sigma)
+
+plt.figure(figsize=(8, 6))
+plt.plot(mu, likelihood, color='black')
+plt.xlabel('μ')
+plt.ylabel('likelihood')
+plt.show()
