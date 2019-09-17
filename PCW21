@@ -72,3 +72,40 @@ plt.plot(mu, likelihood, color='black')
 plt.xlabel('μ')
 plt.ylabel('likelihood')
 plt.show()
+
+
+Vy's Code:
+
+data = [20, 27, 23.5, 28.2, 21]
+
+# Parameters of the truncated normal pdf
+def update(data,prior):
+    for datum in data:
+        sigma = 4
+        lower_limit = 0
+        upper_limit = np.inf
+        likelihood = sts.truncnorm.pdf(
+            datum,
+            (lower_limit-mu)/sigma,  # See the SciPy documentation. The lower and upper
+            (upper_limit-mu)/sigma,  # limits are defined in terms of the standard normal.
+            loc=mu,
+            scale=sigma)
+
+        unnormalized_posterior = prior * likelihood
+
+        area = sp.integrate.trapz(unnormalized_posterior, mu)
+        print('Normalization constant of posterior:', area)
+        posterior = unnormalized_posterior / area
+        
+        plt.figure(figsize=(8, 6))
+        plt.plot(mu, likelihood, color='red', label='likelihood')
+        plt.plot(mu, prior, color='black', linestyle=':', label='prior')
+        plt.plot(mu, posterior, color='black', label='posterior')
+        plt.xlabel('μ')
+        plt.ylabel('probability density')
+        plt.legend()
+        plt.show()
+        
+        prior = posterior
+        
+    return posterior
